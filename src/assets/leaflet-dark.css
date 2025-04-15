@@ -1,0 +1,33 @@
+/* .leaflet-layer,
+.leaflet-control-zoom-in,
+.leaflet-control-zoom-out,
+.leaflet-control-attribution {
+  filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
+} */
+
+.leaflet-pane.leaflet-map-pane,
+.leaflet-container.leaflet-touch.leaflet-retina.leaflet-fade-anim.leaflet-grab.leaflet-touch-drag.leaflet-touch-zoom {
+  position: relative;
+}
+
+.osmb-container {
+  transform: translate3d(0, 0, 0);
+  pointerEvents: none;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.osmb-container.zoom-animation {
+  transition-duration: 250ms;
+  transition-property: transform;
+  transform-origin: 50% 50%;
+}
+
+.osmb-layer {
+  transform: translate3d(0, 0, 0);
+  image-rendering: optimizeSpeed;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
