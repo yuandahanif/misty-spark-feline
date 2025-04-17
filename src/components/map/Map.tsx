@@ -52,7 +52,7 @@ export default function MapComponent() {
       transitionDuration: 3000,
       transitionInterpolator: new LinearInterpolator(["bearing"]),
       onTransitionEnd: (t) => {
-        t.end();
+        rotateCamera();
       },
     }));
   }, []);

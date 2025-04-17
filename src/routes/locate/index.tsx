@@ -18,13 +18,15 @@ export const Route = createFileRoute("/locate/")({
   component: LocateIndex,
 });
 
-
 function LocateIndex() {
   return (
     <SidebarProvider>
       <SidebarInset>
         <div className="relative flex flex-1 flex-col gap-4 p-1">
-          <section className="grid max-h-dvh w-full flex-1">
+          <section
+            className="grid max-h-dvh w-full flex-1"
+            onContextMenu={(e) => e.preventDefault()}
+          >
             <MapComponent />
           </section>
 
