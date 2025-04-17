@@ -154,7 +154,7 @@ export default function MapComponent({ targetCity: props_targetCity }: Props) {
       setInitialViewState({
         ...city,
         transitionInterpolator: new FlyToInterpolator({ speed: 2, curve: 1 }),
-        transitionDuration: 6000,
+        transitionDuration: 10000,
         onTransitionEnd: () => {
           rotateCamera();
           if (onTransitionEnd) return onTransitionEnd();
@@ -180,7 +180,7 @@ export default function MapComponent({ targetCity: props_targetCity }: Props) {
         const random_city = randomStarterCity();
         flyToCity(random_city);
         loop_until_result();
-      }, 10000);
+      }, 16000);
 
       setTimeoutIds((s) => [...s, t_id]);
     };
