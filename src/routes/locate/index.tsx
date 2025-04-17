@@ -13,11 +13,12 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
+import { OSMBuildings } from "@/lib/OSMBuildings-Leaflet";
+
 import "leaflet/dist/leaflet.css";
 import "@/assets/leaflet-dark.css";
 import "leaflet/dist/leaflet.js";
-
-import { OSMBuildings } from "@/lib/OSMBuildings-Leaflet";
+import CreateForm from "@/components/locate/create-form";
 
 export const Route = createFileRoute("/locate/")({
   component: LocateIndex,
@@ -46,35 +47,40 @@ function LocateIndex() {
     <SidebarProvider>
       <SidebarInset>
         <div className="relative flex flex-1 flex-col gap-4 p-1">
-          <header className="fixed top-1 left-1 bg-sidebar text-sidebar-foreground p-2">
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button size="sm" variant="outline" className="cursor-pointer">
-                  <span className="text-sm">Locate</span>
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Are you absolutely sure?</DialogTitle>
-                  <DialogDescription>
-                    This action cannot be undone. This will permanently delete
-                    your account and remove your data from our servers.
-                  </DialogDescription>
-                </DialogHeader>
-              </DialogContent>
-            </Dialog>
-          </header>
-
           <section className="grid max-h-dvh w-full flex-1">
             <MapContainer
               center={[52.51836, 13.40438]}
               zoom={16}
               scrollWheelZoom={true}
               className="relative"
+              zoomControl={false}
             >
               <MapComponent />
             </MapContainer>
           </section>
+
+          <header className="fixed z-[1000] top-1 left-1 text-sidebar-foreground p-2">
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button
+                  size="sm"
+                  variant="default"
+                  className="cursor-pointer bg-gray-800 hover:bg-gray-900 text-white"
+                >
+                  <span className="text-sm">New Search</span>
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="z-[1001] w-4xl!">
+                <DialogHeader>
+                  <DialogTitle>New Search</DialogTitle>
+                  <DialogDescription>
+                    -
+                  </DialogDescription>
+                  <CreateForm />
+                </DialogHeader>
+              </DialogContent>
+            </Dialog>
+          </header>
         </div>
       </SidebarInset>
       <AppSidebar side="right" />
