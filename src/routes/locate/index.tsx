@@ -1,6 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect } from "react";
-import { MapContainer, TileLayer, useMap } from "react-leaflet";
 import { AppSidebar } from "@/components/app-sidebar";
 import { Button } from "@/components/ui/button";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
@@ -13,8 +11,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
-import { OSMBuildings } from "@/lib/OSMBuildings-Leaflet";
-
 import MapComponent from "@/components/map/Map";
 import CreateForm from "@/components/locate/create-form";
 
@@ -22,23 +18,6 @@ export const Route = createFileRoute("/locate/")({
   component: LocateIndex,
 });
 
-// function MapComponent() {
-//   const map = useMap();
-//   useEffect(() => {
-//     const osmb = new OSMBuildings(map).load(
-//       "https://{s}.data.osmbuildings.org/0.2/59fcc2e8/tile/{z}/{x}/{y}.json"
-//     );
-//     console.log(" useLayoutEffect ~ osmb:", osmb);
-//   }, []);
-
-//   return (
-//     <TileLayer
-//       className="relative"
-//       attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-//       url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-//     />
-//   );
-// }
 
 function LocateIndex() {
   return (

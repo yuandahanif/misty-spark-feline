@@ -1,10 +1,16 @@
 import DeckGL from "@deck.gl/react";
-import { Map, useControl } from "react-map-gl/maplibre";
-import { MapboxOverlay } from "@deck.gl/mapbox";
-import { DeckProps, FlyToInterpolator, MapViewState } from "@deck.gl/core";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { Map } from "react-map-gl/maplibre";
+import {
+  FlyToInterpolator,
+  LinearInterpolator,
+  MapViewState,
+} from "@deck.gl/core";
+import { ScatterplotLayer } from "@deck.gl/layers";
+import { useCallback, useEffect, useState } from "react";
 
 import "maplibre-gl/dist/maplibre-gl.css";
+import { Button } from "../ui/button";
+import { cn } from "@/lib/utils";
 
 const CITIES: { [name: string]: MapViewState } = {
   SF: {
@@ -24,28 +30,56 @@ const CITIES: { [name: string]: MapViewState } = {
 };
 
 export default function MapComponent() {
+  const [isTransitioning, setIsTransitioning] = useState(false);
   const [initialViewState, setInitialViewState] = useState<MapViewState>(
     CITIES.SF
   );
 
+  const layers = [
+    new ScatterplotLayer({
+      id: "deckgl-circle",
+      data: [{ position: [CITIES.NYC.longitude, CITIES.NYC.latitude] }],
+      getPosition: (d) => d.position,
+      getFillColor: [255, 0, 0, 100],
+      getRadius: 50,
+    }),
+  ];
+
+  const rotateCamera = useCallback(() => {
+    setInitialViewState((viewState) => ({
+      ...viewState,
+      bearing: (viewState?.bearing || 0) + 12,
+      transitionDuration: 3000,
+      transitionInterpolator: new LinearInterpolator(["bearing"]),
+      onTransitionEnd: (t) => {
+        t.end();
+      },
+    }));
+  }, []);
+
   const flyToCity = useCallback(() => {
     setInitialViewState({
       ...CITIES.NYC,
-      transitionInterpolator: new FlyToInterpolator({ speed: 2 }),
+      transitionInterpolator: new FlyToInterpolator({ speed: 2, curve: 1 }),
       transitionDuration: "auto",
+      onTransitionEnd: () => {
+        rotateCamera();
+        setIsTransitioning(false);
+      },
     });
   }, []);
 
   useEffect(() => {
     setTimeout(() => {
+      setIsTransitioning(true);
       flyToCity();
-    }, 2000);
+    }, 3000);
   }, []);
 
   return (
-    <DeckGL controller initialViewState={initialViewState}>
+    <DeckGL controller layers={layers} initialViewState={initialViewState}>
       <Map
-        mapStyle="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
+        mapStyle="https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json"
         onLoad={(event) => {
           const map = event.target;
 
@@ -92,6 +126,17 @@ export default function MapComponent() {
           );
         }}
       />
+
+      <Button
+        className={cn(
+          "absolute block bottom-1.5 left-1/2 -translate-x-1/2",
+          !isTransitioning && "hidden"
+        )}
+        variant="outline"
+        onClick={flyToCity}
+      >
+        continue
+      </Button>
     </DeckGL>
   );
 }
