@@ -13,6 +13,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
+import { OSMBuildings } from "@/lib/OSMBuildings-Leaflet";
+
 import MapComponent from "@/components/map/Map";
 import CreateForm from "@/components/locate/create-form";
 
