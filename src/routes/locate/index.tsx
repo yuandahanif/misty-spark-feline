@@ -13,33 +13,35 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
-import "leaflet/dist/leaflet.css";
-import "@/assets/leaflet-dark.css";
-import "leaflet/dist/leaflet.js";
+import MapComponent from "@/components/map/Map";
 
-import { OSMBuildings } from "@/lib/OSMBuildings-Leaflet";
+// import "leaflet/dist/leaflet.css";
+// import "@/assets/leaflet-dark.css";
+// import "leaflet/dist/leaflet.js";
+
+// import { OSMBuildings } from "@/lib/OSMBuildings-Leaflet";
 
 export const Route = createFileRoute("/locate/")({
   component: LocateIndex,
 });
 
-function MapComponent() {
-  const map = useMap();
-  useEffect(() => {
-    const osmb = new OSMBuildings(map).load(
-      "https://{s}.data.osmbuildings.org/0.2/59fcc2e8/tile/{z}/{x}/{y}.json"
-    );
-    console.log(" useLayoutEffect ~ osmb:", osmb);
-  }, []);
+// function MapComponent() {
+//   const map = useMap();
+//   useEffect(() => {
+//     const osmb = new OSMBuildings(map).load(
+//       "https://{s}.data.osmbuildings.org/0.2/59fcc2e8/tile/{z}/{x}/{y}.json"
+//     );
+//     console.log(" useLayoutEffect ~ osmb:", osmb);
+//   }, []);
 
-  return (
-    <TileLayer
-      className="relative"
-      attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-    />
-  );
-}
+//   return (
+//     <TileLayer
+//       className="relative"
+//       attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+//       url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+//     />
+//   );
+// }
 
 function LocateIndex() {
   return (
@@ -66,14 +68,14 @@ function LocateIndex() {
           </header>
 
           <section className="grid max-h-dvh w-full flex-1">
-            <MapContainer
+            <MapComponent />
+            {/* <MapContainer
               center={[52.51836, 13.40438]}
               zoom={16}
               scrollWheelZoom={true}
               className="relative"
             >
-              <MapComponent />
-            </MapContainer>
+            </MapContainer> */}
           </section>
         </div>
       </SidebarInset>
