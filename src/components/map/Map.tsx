@@ -51,7 +51,7 @@ export default function MapComponent() {
       bearing: (viewState?.bearing || 0) + 12,
       transitionDuration: 3000,
       transitionInterpolator: new LinearInterpolator(["bearing"]),
-      onTransitionEnd: (t) => {
+      onTransitionEnd: () => {
         rotateCamera();
       },
     }));
@@ -69,12 +69,12 @@ export default function MapComponent() {
     });
   }, []);
 
-  useEffect(() => {
-    setTimeout(() => {
-      setIsTransitioning(true);
-      flyToCity();
-    }, 3000);
-  }, []);
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     setIsTransitioning(true);
+  //     flyToCity();
+  //   }, 3000);
+  // }, []);
 
   return (
     <DeckGL controller layers={layers} initialViewState={initialViewState}>
