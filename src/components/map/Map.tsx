@@ -117,11 +117,11 @@ type Props = {
   targetCity?: MapViewState;
 };
 
-export default function MapComponent({ targetCity: props_targetCity }: Props) {
+export default function MapComponent({ targetCity: _props_targetCity }: Props) {
   const systemFlow = useSystemFlowStore((state) => state.user_flow_stage);
 
   const [temeoutIds, setTimeoutIds] = useState<NodeJS.Timeout[]>([]);
-  const [targetCity, setTargetCity] = useState<MapViewState | null>(null);
+  const [targetCity, _setTargetCity] = useState<MapViewState | null>(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [initialViewState, setInitialViewState] = useState<MapViewState>(() =>
     randomStarterCity()
