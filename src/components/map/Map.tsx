@@ -127,15 +127,7 @@ export default function MapComponent({ targetCity: _props_targetCity }: Props) {
     randomStarterCity()
   );
 
-  const layers = [
-    new ScatterplotLayer({
-      id: "deckgl-circle",
-      data: [{ position: [CITIES.NYC.longitude, CITIES.NYC.latitude] }],
-      getPosition: (d) => d.position,
-      getFillColor: [255, 0, 0, 100],
-      getRadius: 50,
-    }),
-  ];
+  const [layers, setLayers] = useState<ScatterplotLayer[]>([]);
 
   const rotateCamera = useCallback(() => {
     setInitialViewState((viewState) => ({
@@ -167,12 +159,24 @@ export default function MapComponent({ targetCity: _props_targetCity }: Props) {
 
   useEffect(() => {
     const loop_until_result = () => {
+      console.log("looping until result", systemFlow);
+
       if (systemFlow === "displaying_result") {
         temeoutIds.forEach((id) => {
           clearTimeout(id);
         });
         setTimeoutIds([]);
+
         // TODO: set to result city
+        setLayers([
+          new ScatterplotLayer({
+            id: "deckgl-circle",
+            data: [{ position: [CITIES.NYC.longitude, CITIES.NYC.latitude] }],
+            getPosition: (d) => d.position,
+            getFillColor: [255, 0, 0, 100],
+            getRadius: 50,
+          }),
+        ]);
         return flyToCity(CITIES.NYC);
       }
 
@@ -186,13 +190,6 @@ export default function MapComponent({ targetCity: _props_targetCity }: Props) {
     };
 
     loop_until_result();
-
-    return () => {
-      temeoutIds.forEach((id) => {
-        clearTimeout(id);
-      });
-      setTimeoutIds([]);
-    };
   }, [systemFlow]);
 
   return (

@@ -1,47 +1,39 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
-import preactLogo from "../assets/preact.svg";
-import viteLogo from "/vite.svg";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { Button } from "@/components/ui/button";
+import MapComponent from "@/components/map/Map";
 
 export const Route = createFileRoute("/")({
   component: Landing,
 });
 
 function Landing() {
-  const [count, setCount] = useState(0);
-
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://preactjs.com" target="_blank">
-          <img src={preactLogo} className="logo preact" alt="Preact logo" />
-        </a>
+    <main className="flex relative min-h-dvh flex-col items-center justify-center">
+      <div className="absolute w-[99%] h-[98%]">
+        <MapComponent />
       </div>
-      <h1>Vite + Preact</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/app.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p>
-        Check out{" "}
-        <a
-          href="https://preactjs.com/guide/v10/getting-started#create-a-vite-powered-preact-app"
-          target="_blank"
+
+      <div className="relative z-10 flex flex-col items-center justify-center gap-4 p-2 w-full h-full flex-1 bg-linear-to-t from-slate-950 to-slate-950/40">
+        <h1 className="text-6xl font-black text-center max-w-2xl text-shadow-lg text-shadow-red-700/70">
+          Best service to locate anyone around the Globe
+        </h1>
+
+        <div className="max-w-prose mt-2">
+          <p className="text-lg">
+            <span className="font-black italic">#1</span> Privacy focused OSINT
+            tool to locate anyone around the world.
+          </p>
+        </div>
+
+        <Button
+          variant="outline"
+          type="button"
+          className="mt-4 cursor-pointer"
+          size="lg"
         >
-          create-preact
-        </a>
-        , the official Preact + Vite starter
-      </p>
-      <p className="read-the-docs">
-        Click on the Vite and Preact logos to learn more
-      </p>
-    </>
+          <Link to="/locate">Get Started</Link>
+        </Button>
+      </div>
+    </main>
   );
 }
