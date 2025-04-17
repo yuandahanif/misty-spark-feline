@@ -2,20 +2,26 @@ import { useDropzone } from "react-dropzone";
 
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
-import { Trash2Icon, TrashIcon } from "lucide-react";
+import { TrashIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { FileWithPreview } from "@/types/FileWithPreview";
 
-export default function CreateForm() {
-  const [files, setFiles] = useState<{ preview: string; name: string }[]>([]);
+
+type Props = {
+  onSubmit?: (files: FileWithPreview) => void;
+};
+
+export default function CreateForm({ onSubmit }: Props) {
+  const [files, setFiles] = useState<FileWithPreview>([]);
 
   const { getRootProps, getInputProps } = useDropzone({
     accept: {
       "image/jpeg": [],
       "image/png": [],
     },
-    onDrop: (acceptedFiles) => {
+    onDropAccepted(files) {
       setFiles(
-        acceptedFiles.map((file) =>
+        files.map((file) =>
           Object.assign(file, {
             preview: URL.createObjectURL(file),
           })
@@ -57,13 +63,18 @@ export default function CreateForm() {
     </button>
   ));
 
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSubmit?.(files);
+  };
+
   useEffect(() => {
     // Make sure to revoke the data uris to avoid memory leaks, will run on unmount
     return () => files.forEach((file) => URL.revokeObjectURL(file.preview));
   }, [files]);
 
   return (
-    <form onSubmit={() => {}} className="flex flex-col flex-1 gap-4">
+    <form onSubmit={handleSubmit} className="flex flex-col flex-1 gap-4">
       <section className=" flex flex-col flex-1 h-full max-h-[calc(100dvh-200px)]">
         <div
           {...getRootProps()}
@@ -82,13 +93,18 @@ export default function CreateForm() {
           onClick={removeAllFiles}
           variant="outline"
           size="sm"
-          className={cn(files.length > 0 ? "block" : "hidden", "mt-2 cursor-pointer")}
+          className={cn(
+            files.length > 0 ? "block" : "hidden",
+            "mt-2 cursor-pointer"
+          )}
         >
           Clear
         </Button>
       </section>
 
-      <Button type="submit">Submit</Button>
+      <Button type="submit" className="cursor-pointer">
+        Submit
+      </Button>
     </form>
   );
 }

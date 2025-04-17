@@ -13,12 +13,33 @@ import {
 
 import MapComponent from "@/components/map/Map";
 import CreateForm from "@/components/locate/create-form";
+import { useSystemFlowStore } from "@/contexts/system";
+import { useState } from "react";
+import { FileWithPreview } from "@/types/FileWithPreview";
 
 export const Route = createFileRoute("/locate/")({
   component: LocateIndex,
 });
 
 function LocateIndex() {
+  const systemFlow = useSystemFlowStore((state) => state.user_flow_stage);
+  const setStage = useSystemFlowStore((state) => state.set_stage);
+
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const onSubmit = (files: FileWithPreview) => {
+    setStage("waiting_for_result");
+    setIsDialogOpen(false);
+
+    // TODO: handle file upload
+    console.log("Files to upload:", files);
+
+    // Simulate a delay for the result
+    setTimeout(() => {
+      setStage("displaying_result");
+    }, files.length * 2000);
+  };
+
   return (
     <SidebarProvider>
       <SidebarInset>
@@ -31,11 +52,12 @@ function LocateIndex() {
           </section>
 
           <header className="fixed z-[1000] top-1 left-1 text-sidebar-foreground p-2">
-            <Dialog>
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
                 <Button
                   size="sm"
                   variant="default"
+                  disabled={systemFlow == "waiting_for_result"}
                   className="cursor-pointer bg-gray-800 hover:bg-gray-900 text-white"
                 >
                   <span className="text-sm">New Search</span>
@@ -45,7 +67,7 @@ function LocateIndex() {
                 <DialogHeader>
                   <DialogTitle>New Search</DialogTitle>
                   <DialogDescription>-</DialogDescription>
-                  <CreateForm />
+                  <CreateForm onSubmit={onSubmit} />
                 </DialogHeader>
               </DialogContent>
             </Dialog>

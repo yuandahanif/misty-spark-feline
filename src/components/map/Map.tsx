@@ -6,7 +6,7 @@ import {
   MapViewState,
 } from "@deck.gl/core";
 import { ScatterplotLayer } from "@deck.gl/layers";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 
 import "maplibre-gl/dist/maplibre-gl.css";
 import { Button } from "../ui/button";
