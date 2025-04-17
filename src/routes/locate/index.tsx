@@ -13,34 +13,30 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
-import { OSMBuildings } from "@/lib/OSMBuildings-Leaflet";
-
-import "leaflet/dist/leaflet.css";
-import "@/assets/leaflet-dark.css";
-import "leaflet/dist/leaflet.js";
+import MapComponent from "@/components/map/Map";
 import CreateForm from "@/components/locate/create-form";
 
 export const Route = createFileRoute("/locate/")({
   component: LocateIndex,
 });
 
-function MapComponent() {
-  const map = useMap();
-  useEffect(() => {
-    const osmb = new OSMBuildings(map).load(
-      "https://{s}.data.osmbuildings.org/0.2/59fcc2e8/tile/{z}/{x}/{y}.json"
-    );
-    console.log(" useLayoutEffect ~ osmb:", osmb);
-  }, []);
+// function MapComponent() {
+//   const map = useMap();
+//   useEffect(() => {
+//     const osmb = new OSMBuildings(map).load(
+//       "https://{s}.data.osmbuildings.org/0.2/59fcc2e8/tile/{z}/{x}/{y}.json"
+//     );
+//     console.log(" useLayoutEffect ~ osmb:", osmb);
+//   }, []);
 
-  return (
-    <TileLayer
-      className="relative"
-      attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-    />
-  );
-}
+//   return (
+//     <TileLayer
+//       className="relative"
+//       attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+//       url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+//     />
+//   );
+// }
 
 function LocateIndex() {
   return (
@@ -48,15 +44,7 @@ function LocateIndex() {
       <SidebarInset>
         <div className="relative flex flex-1 flex-col gap-4 p-1">
           <section className="grid max-h-dvh w-full flex-1">
-            <MapContainer
-              center={[52.51836, 13.40438]}
-              zoom={16}
-              scrollWheelZoom={true}
-              className="relative"
-              zoomControl={false}
-            >
-              <MapComponent />
-            </MapContainer>
+            <MapComponent />
           </section>
 
           <header className="fixed z-[1000] top-1 left-1 text-sidebar-foreground p-2">
@@ -73,9 +61,7 @@ function LocateIndex() {
               <DialogContent className="z-[1001] w-4xl!">
                 <DialogHeader>
                   <DialogTitle>New Search</DialogTitle>
-                  <DialogDescription>
-                    -
-                  </DialogDescription>
+                  <DialogDescription>-</DialogDescription>
                   <CreateForm />
                 </DialogHeader>
               </DialogContent>
