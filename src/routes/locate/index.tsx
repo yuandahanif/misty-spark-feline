@@ -25,7 +25,7 @@ function LocateIndex() {
   const systemFlow = useSystemFlowStore((state) => state.user_flow_stage);
   const setStage = useSystemFlowStore((state) => state.set_stage);
 
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(true);
 
   const onSubmit = (files: FileWithPreview) => {
     setStage("waiting_for_result");
@@ -37,6 +37,7 @@ function LocateIndex() {
     // Simulate a delay for the result
     setTimeout(() => {
       setStage("displaying_result");
+      
     }, files.length * 2000);
   };
 
@@ -72,6 +73,17 @@ function LocateIndex() {
               </DialogContent>
             </Dialog>
           </header>
+
+          <Dialog open={systemFlow == "waiting_for_result"}>
+            <DialogContent className="z-[1001] w-4xl!" closeButton={false}>
+              <DialogHeader>
+                <DialogTitle>Loading</DialogTitle>
+                <DialogDescription>
+                  Please wait while we process your request.
+                </DialogDescription>
+              </DialogHeader>
+            </DialogContent>
+          </Dialog>
         </div>
       </SidebarInset>
       <AppSidebar side="right" />
