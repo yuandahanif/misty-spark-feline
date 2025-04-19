@@ -39,6 +39,16 @@ export default function MapLandingComponent() {
   }, []);
 
   const flyToCity = useCallback((city: (typeof CITIES)[string]) => {
+    setLayers([
+      new ScatterplotLayer({
+        id: "deckgl-circle",
+        data: [{ position: [city.longitude, city.latitude] }],
+        getPosition: (d) => d.position,
+        getFillColor: [255, 0, 0, 100],
+        getRadius: 500,
+      }),
+    ]);
+
     setInitialViewState({
       ...city,
       transitionInterpolator: new FlyToInterpolator({ speed: 2, curve: 1 }),
@@ -47,8 +57,15 @@ export default function MapLandingComponent() {
         rotateCamera();
 
         setTimeout(() => {
-          const random_city = randomStarterCity();
-          flyToCity(random_city);
+          const get_random_city = () => {
+            let new_city = randomStarterCity();
+
+            while (Object.keys(city) === Object.keys(new_city)) {
+              new_city = randomStarterCity();
+            }
+            return new_city;
+          };
+          flyToCity(get_random_city());
         }, 5000);
       },
     });
