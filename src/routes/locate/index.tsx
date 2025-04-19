@@ -11,7 +11,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
-import MapComponent from "@/components/map/Map";
+import MapComponent from "@/components/map/map";
 import CreateForm from "@/components/locate/create-form";
 import { useSystemFlowStore } from "@/contexts/system";
 import { useState } from "react";
@@ -31,7 +31,7 @@ function LocateIndex() {
 
   const uploadFileMutation = useMutation({
     mutationFn: async (body: FormData) => {
-      const response = await fetch('http://127.0.0.1:5000/upload', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/upload`, {
         method: 'POST',
         body,
       })
