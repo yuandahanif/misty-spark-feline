@@ -7,8 +7,9 @@ type FLOW_USER_STAGE =
 
 interface SystemFlow {
     user_flow_stage: FLOW_USER_STAGE;
-    next_stage?: () => void;
+    process_id?: string;
     reset_stage?: () => void;
+    set_process_id: (id?: string) => void;
     set_stage: (
         stage: FLOW_USER_STAGE,
     ) => void;
@@ -16,13 +17,10 @@ interface SystemFlow {
 
 const useSystemFlowStore = create<SystemFlow>()((set) => ({
     user_flow_stage: "waiting_for_input",
-    next_stage: () =>
-        set((state) => ({
-            user_flow_stage: state.user_flow_stage === "waiting_for_input"
-                ? "waiting_for_result"
-                : state.user_flow_stage === "waiting_for_result"
-                ? "displaying_result"
-                : "waiting_for_input",
+    process_id: undefined,
+    set_process_id: (id) =>
+        set(() => ({
+            process_id: id,
         })),
     reset_stage: () =>
         set(() => ({

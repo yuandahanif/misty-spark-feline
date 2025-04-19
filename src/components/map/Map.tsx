@@ -12,6 +12,7 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import { Button } from "../ui/button";
 import { cn } from "@/lib/utils";
 import { useSystemFlowStore } from "@/contexts/system";
+import { useQuery } from "@tanstack/react-query";
 
 const VIEWPOINT_DEFAULT = {
   zoom: 15.5,
@@ -113,15 +114,46 @@ const randomStarterCity = () => {
   return CITIES[randomCity as keyof typeof CITIES];
 };
 
-type Props = {
-  targetCity?: MapViewState;
-};
-
-export default function MapComponent({ targetCity: _props_targetCity }: Props) {
+export default function MapComponent() {
   const systemFlow = useSystemFlowStore((state) => state.user_flow_stage);
+  const processId = useSystemFlowStore((state) => state.process_id);
+  const setSystemFlow = useSystemFlowStore((state) => state.set_stage);
+  const setProcessId = useSystemFlowStore((state) => state.set_process_id);
+
+  const resultQuery = useQuery({
+    queryKey: ["geo_result"],
+    queryFn: async () => {
+      try {
+        const response = await fetch(
+          `http://127.0.0.1:5000/getresult/${processId}`
+        );
+
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+
+        return await response.text();
+      } catch (error) {
+        console.error("Error fetching result:", error);
+        // setSystemFlow("waiting_for_input");
+        // setProcessId(undefined);
+        return null;
+      }
+    },
+    enabled: processId !== undefined,
+    // Refetch the data every second
+    refetchInterval: 2000,
+  });
 
   const [temeoutIds, setTimeoutIds] = useState<NodeJS.Timeout[]>([]);
-  const [targetCity, _setTargetCity] = useState<MapViewState | null>(null);
+  const [result, setResult] = useState<{
+    city: string;
+    country: string;
+    latitude: number;
+    longitude: number;
+    confidence: number;
+    reasoning: string;
+  } | null>(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [initialViewState, setInitialViewState] = useState<MapViewState>(() =>
     randomStarterCity()
@@ -158,10 +190,45 @@ export default function MapComponent({ targetCity: _props_targetCity }: Props) {
   );
 
   useEffect(() => {
-    const loop_until_result = () => {
-      console.log("looping until result", systemFlow);
+    try {
+      if (resultQuery.isSuccess) {
+        let result_text = resultQuery.data;
+        if (result_text == "None") return;
 
-      if (systemFlow === "displaying_result") {
+        result_text = result_text.replace(/```json/g, "");
+        result_text = result_text.replace(/```/g, "");
+
+        console.log("result_text", result_text);
+
+        const data = JSON.parse(result_text);
+        const city = data.city;
+        const country = data.country;
+        const latitude = data.latitude;
+        const longitude = data.longitude;
+        const confidence = data.confidence;
+        const reasoning = data.reasoning;
+
+        setResult({
+          city,
+          country,
+          latitude,
+          longitude,
+          confidence,
+          reasoning,
+        });
+
+        setSystemFlow("displaying_result");
+        setProcessId(undefined);
+      }
+
+    } catch (error) {
+      console.error("Error parsing result:", error);
+    }
+  }, [resultQuery.data, resultQuery.isSuccess]);
+
+  useEffect(() => {
+    const loop_until_result = () => {
+      if (systemFlow === "displaying_result" && result) {
         temeoutIds.forEach((id) => {
           clearTimeout(id);
         });
@@ -171,13 +238,17 @@ export default function MapComponent({ targetCity: _props_targetCity }: Props) {
         setLayers([
           new ScatterplotLayer({
             id: "deckgl-circle",
-            data: [{ position: [CITIES.NYC.longitude, CITIES.NYC.latitude] }],
+            data: [{ position: [result.longitude, result.latitude] }],
             getPosition: (d) => d.position,
             getFillColor: [255, 0, 0, 100],
             getRadius: 50,
           }),
         ]);
-        return flyToCity(CITIES.NYC);
+        return flyToCity({
+          latitude: result.latitude,
+          longitude: result.longitude,
+          ...VIEWPOINT_DEFAULT,
+        });
       }
 
       const t_id = setTimeout(() => {
@@ -256,7 +327,14 @@ export default function MapComponent({ targetCity: _props_targetCity }: Props) {
           !isTransitioning && "hidden"
         )}
         variant="outline"
-        onClick={() => targetCity && flyToCity(targetCity)}
+        onClick={() =>
+          result &&
+          flyToCity({
+            latitude: result.latitude,
+            longitude: result.longitude,
+            ...VIEWPOINT_DEFAULT,
+          })
+        }
       >
         continue
       </Button>

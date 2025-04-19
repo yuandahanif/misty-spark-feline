@@ -16,6 +16,7 @@ import CreateForm from "@/components/locate/create-form";
 import { useSystemFlowStore } from "@/contexts/system";
 import { useState } from "react";
 import { FileWithPreview } from "@/types/FileWithPreview";
+import { useMutation } from "@tanstack/react-query";
 
 export const Route = createFileRoute("/locate/")({
   component: LocateIndex,
@@ -23,22 +24,39 @@ export const Route = createFileRoute("/locate/")({
 
 function LocateIndex() {
   const systemFlow = useSystemFlowStore((state) => state.user_flow_stage);
+  const setProcessId = useSystemFlowStore((state) => state.set_process_id);
   const setStage = useSystemFlowStore((state) => state.set_stage);
 
   const [isDialogOpen, setIsDialogOpen] = useState(true);
 
+  const uploadFileMutation = useMutation({
+    mutationFn: async (body: FormData) => {
+      const response = await fetch('http://127.0.0.1:5000/upload', {
+        method: 'POST',
+        body,
+      })
+      if (!response.ok) {
+        throw new Error('Something went wrong.')
+      }
+      return response.text()
+    },
+    onSuccess: (res) => {
+      // Invalidate and refetch
+      setStage("waiting_for_result");
+      setIsDialogOpen(false);
+      setProcessId(res);
+    },
+  })
+
   const onSubmit = (files: FileWithPreview) => {
-    setStage("waiting_for_result");
-    setIsDialogOpen(false);
+    
+    setStage("displaying_result");
+    const formData = new FormData();
+    files.forEach((file) => {
+      formData.append("file", file);
+    });
 
-    // TODO: handle file upload
-    console.log("Files to upload:", files);
-
-    // Simulate a delay for the result
-    setTimeout(() => {
-      setStage("displaying_result");
-      
-    }, files.length * 2000);
+    uploadFileMutation.mutate(formData);
   };
 
   return (
